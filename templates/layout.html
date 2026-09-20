@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{block "title" .}}SethOfficial{{end}}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Include HTMX globally -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <!-- Global Navigation -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">SethOfficial</a>
+            <nav style="display: flex; align-items: center; gap: 1rem;">
+                <a href="/" hx-boost="true">Home</a>
+                {{if .IsLoggedIn}}
+                    <a href="/profile" hx-boost="true" title="Profile" style="display: flex; align-items: center; color: var(--text);">
+                        <!-- SVG Profile Icon -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </a>
+                {{else}}
+                    <a href="/login" hx-boost="true">Login</a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Page Content Injected Here -->
+    <main class="container">
+        {{block "content" .}}{{end}}
+    </main>
+
+    <!-- Global Footer -->
+    <footer>
+        <p>&copy; 2026 SethOfficial.</p>
+    </footer>
+</body>
+</html>

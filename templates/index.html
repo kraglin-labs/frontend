@@ -1,0 +1,16 @@
+{{define "title"}}Home - SethOfficial{{end}}
+
+{{define "content"}}
+<div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+    {{if .IsLoggedIn}}
+        <h1>Welcome {{.User.FullName}}</h1>
+        <p style="color: var(--text-muted); margin-top: 1rem;">You are successfully connected to SethOfficial.</p>
+    {{else}}
+        <h1>Welcome to SethOfficial</h1>
+        <p>Your premier destination, powered by Go and HTMX.</p>
+        <div style="margin-top: 1.5rem;">
+            <a href="/login" hx-boost="true" style="background-color: var(--accent); color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 600;">Sign In</a>
+        </div>
+    {{end}}
+</div>
+{{end}}
