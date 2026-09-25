@@ -443,3 +443,84 @@ footer {
     .cart-row { flex-wrap: wrap; }
     .cart-row-subtotal { text-align: left; }
 }
+/* --- Search results panel --- */
+.search-bar {
+    position: relative;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    max-height: 60vh;
+    overflow-y: auto;
+    z-index: 200;
+    padding: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="light"] .search-results {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Search suggestions --- */
+.suggest-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.suggest-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.suggest-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .suggest-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.suggest-arrow {
+    color: var(--text-muted);
+}
+
+/* --- Category filter chips --- */
+.chip-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.chip {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+    transition: all 0.15s;
+}
+
+.chip:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.chip-active,
+.chip-active:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}

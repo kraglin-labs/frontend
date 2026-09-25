@@ -1,0 +1,40 @@
+{{define "title"}}Search - SethOfficial{{end}}
+
+{{define "content"}}
+<a href="/" hx-boost="true" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to shop
+</a>
+
+{{if not .Query}}
+<div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+    <p style="color: var(--text-muted);">Type something in the search bar above to find products.</p>
+</div>
+{{else}}
+<h1 style="margin-bottom: 0.25rem;">Results for "{{.Query}}"</h1>
+<p style="color: var(--text-muted); margin-bottom: 1.25rem;">{{.ResultCount}} product{{if ne .ResultCount 1}}s{{end}} found</p>
+
+<!-- Category filter chips -->
+{{if .Categories}}
+<div class="chip-row">
+    <a href="/search?q={{.Query}}" class="chip {{if not .ActiveCategory}}chip-active{{end}}">All</a>
+    {{range .Categories}}
+    <a href="/search?q={{$.Query}}&category={{.}}" class="chip {{if eq $.ActiveCategory .}}chip-active{{end}}">{{.}}</a>
+    {{end}}
+</div>
+{{end}}
+
+{{if not .CardsHTML}}
+<div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+    <p style="color: var(--text-muted);">No products match your search{{if .ActiveCategory}} in this category{{end}}.</p>
+</div>
+{{else}}
+<div class="products-grid">
+    {{.CardsHTML}}
+</div>
+{{end}}
+{{end}}
+{{end}}

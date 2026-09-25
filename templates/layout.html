@@ -87,7 +87,9 @@
         <!-- Search Bar (drops down from header) -->
         <div id="search-bar" class="search-bar">
             <div class="nav-container">
-                <form hx-get="/search" hx-target="#search-results" hx-trigger="keyup changed delay:300ms from:input[name=q], submit">
+                <form action="/search" method="get" hx-boost="true"
+                      hx-get="/search/suggest" hx-target="#search-results"
+                      hx-trigger="keyup changed delay:300ms from:input[name=q]">
                     <input type="text" name="q" placeholder="Search SethOfficial..." autocomplete="off" autofocus>
                 </form>
             </div>

@@ -43,6 +43,10 @@ func main() {
 	http.HandleFunc("/cart/items", handlers.AddToCart)          // POST
 	http.HandleFunc("/cart/items/", handlers.CartItemHandler)   // PUT / DELETE (id in path)
 
+	// Search routes
+	http.HandleFunc("/search", handlers.SearchPage)
+	http.HandleFunc("/search/suggest", handlers.Suggest)
+
 	println("SethOfficial frontend started at http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }
