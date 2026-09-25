@@ -1,0 +1,15 @@
+<a href="/product/{{.ID}}" hx-boost="true" class="product-card">
+    {{if .Images}}
+        <img src="{{index .Images 0}}" alt="{{.Name}}" class="product-img" loading="lazy">
+    {{else}}
+        <div class="product-img product-img-placeholder">{{.Category}}</div>
+    {{end}}
+    <div class="product-card-body">
+        <span class="product-category">{{.Category}}</span>
+        <h3 class="product-name">{{.Name}}</h3>
+        <div class="product-card-footer">
+            <span class="product-price">{{money .Price}}</span>
+            {{if eq .Stock 0}}<span class="badge badge-danger">Out of stock</span>{{end}}
+        </div>
+    </div>
+</a>

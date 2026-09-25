@@ -1,0 +1,86 @@
+{{define "title"}}Account Settings - SethOfficial{{end}}
+
+{{define "content"}}
+<a href="/" hx-boost="true" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to shop
+</a>
+<h1 style="margin-bottom: 1.5rem;">Account Settings</h1>
+
+<!-- Section 1: Personal Information -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h2 style="margin-bottom: 1rem;">Personal Information</h2>
+
+    <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Full Name</label>
+        <p>{{.User.FullName}} </p>
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Email</label>
+        <p>{{.User.Email}} {{if .User.Verified}}<span style="color: #4ade80; font-size: 0.85rem;">✓ verified</span>{{end}}</p>
+    </div>
+
+    <div>
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Password</label>
+        <a href="/forgot-password" hx-boost="true" style="color: var(--accent); font-size: 0.9rem;">Reset via email</a>
+    </div>
+</div>
+
+<!-- Section 2: Address -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h2 style="margin-bottom: 1rem;">Address</h2>
+
+    <form hx-put="/profile/address" hx-target="#address-status" hx-swap="innerHTML">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Country</label>
+                <input type="text" name="country" required maxlength="100" value="{{if .User.Address}}{{.User.Address.Country}}{{end}}" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">State</label>
+                <input type="text" name="state" required maxlength="100" value="{{if .User.Address}}{{.User.Address.State}}{{end}}" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">LGA</label>
+                <input type="text" name="lga" required maxlength="100" value="{{if .User.Address}}{{.User.Address.LGA}}{{end}}" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Town</label>
+                <input type="text" name="town" required maxlength="100" value="{{if .User.Address}}{{.User.Address.Town}}{{end}}" style="width: 100%; box-sizing: border-box;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Street</label>
+            <input type="text" name="street" required maxlength="200" value="{{if .User.Address}}{{.User.Address.Street}}{{end}}" style="width: 100%; box-sizing: border-box;">
+        </div>
+
+        <button type="submit">Save Address</button>
+        <span id="address-status" style="margin-left: 1rem; font-size: 0.9rem;"></span>
+    </form>
+</div>
+
+<!-- Section 3: Danger Zone -->
+<div class="card" style="border-color: #7f1d1d;">
+    <h2 style="margin-bottom: 0.5rem; color: var(--danger);">Delete Account</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">
+        Your account is scheduled for deletion for 7 days, then permanently removed.
+        You can restore it within that window by logging in.
+    </p>
+
+    <form hx-post="/account/delete" hx-target="#delete-status" hx-swap="innerHTML"
+          hx-confirm="Really delete your account? You have 7 days to change your mind.">
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Confirm with your password</label>
+            <input type="password" name="password" required placeholder="••••••••" style="width: 100%; max-width: 300px; box-sizing: border-box;">
+        </div>
+
+        <button type="submit" style="background-color: #dc2626;">Delete Account</button>
+        <span id="delete-status" style="margin-left: 1rem; font-size: 0.9rem;"></span>
+    </form>
+</div>
+{{end}}

@@ -1,0 +1,36 @@
+{{define "title"}}Create Account - SethOfficial{{end}}
+
+{{define "content"}}
+<div class="card" id="register-container" style="max-width: 400px; margin: 2rem auto;">
+    <h2>Create your account</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Join SethOfficial in seconds. We'll email you a verification code.</p>
+
+    <form hx-post="/auth/signup" hx-target="#register-container" hx-swap="innerHTML">
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Full Name</label>
+            <input type="text" name="full_name" required placeholder="Jane Doe" style="width: 100%; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Email Address</label>
+            <input type="email" name="email" required placeholder="you@example.com" style="width: 100%; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Password</label>
+            <input type="password" name="password" required minlength="8" placeholder="8+ characters" style="width: 100%; box-sizing: border-box;">
+        </div>
+
+        <button type="submit" style="width: 100%;">Create Account</button>
+    </form>
+
+    <div id="register-error" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></div>
+
+    <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+        Already have an account? <a href="/login" hx-boost="true" style="color: var(--accent);">Sign in</a>
+    </p>
+    <p style="margin-top: 1rem; text-align: center; font-size: 0.9rem;">
+        <a href="/forgot-password" hx-boost="true" style="color: var(--accent);">Forgot password?</a>
+    </p>
+</div>
+{{end}}

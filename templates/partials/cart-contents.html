@@ -1,0 +1,71 @@
+{{if not .Items}}
+<div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+    <p style="color: var(--text-muted);">Your cart is empty.</p>
+    <a href="/" hx-boost="true" style="color: var(--accent); display: inline-block; margin-top: 1rem;">Back to shop</a>
+</div>
+{{else}}
+
+{{if .HasUnavailable}}
+<div class="card" style="border-color: #7f1d1d; margin-bottom: 1rem;">
+    <p style="color: var(--danger); font-size: 0.9rem;">Some items in your cart are unavailable and can't be checked out. Remove them or fix quantities.</p>
+</div>
+{{end}}
+
+{{range .Items}}
+<div class="cart-row">
+    {{if .Image}}
+        <img src="{{.Image}}" alt="{{.Name}}" class="cart-row-img">
+    {{else}}
+        <div class="cart-row-img product-img-placeholder"></div>
+    {{end}}
+
+    <div class="cart-row-info">
+        <a href="/product/{{.ProductID}}" hx-boost="true" style="color: var(--text); font-weight: 600;">{{.Name}}</a>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">{{money .Price}} each</p>
+        {{if not .Available}}
+            <span class="badge badge-danger" style="margin-top: 0.35rem;">{{.Reason}}</span>
+        {{end}}
+    </div>
+
+    <div class="qty-selector">
+        {{if gt .Quantity 1}}
+            <button class="qty-btn" hx-put="/cart/items/{{.ProductID}}"
+                    hx-vals='{"quantity": {{sub .Quantity 1}}}'
+                    hx-target="#cart-contents" hx-swap="innerHTML">−</button>
+        {{else}}
+            <button class="qty-btn" hx-delete="/cart/items/{{.ProductID}}"
+                    hx-target="#cart-contents" hx-swap="innerHTML">−</button>
+        {{end}}
+        <span>{{.Quantity}}</span>
+        <button class="qty-btn" hx-put="/cart/items/{{.ProductID}}"
+                hx-vals='{"quantity": {{add .Quantity 1}}}'
+                hx-target="#cart-contents" hx-swap="innerHTML">+</button>
+    </div>
+
+    <div class="cart-row-subtotal">{{money .Subtotal}}</div>
+
+    <button class="icon-btn" hx-delete="/cart/items/{{.ProductID}}"
+            hx-target="#cart-contents" hx-swap="innerHTML" aria-label="Remove">✕</button>
+</div>
+{{end}}
+
+<div class="card" style="margin-top: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Subtotal ({{.ItemCount}} item{{if gt .ItemCount 1}}s{{end}})</p>
+            <p class="product-price" style="font-size: 1.4rem;">{{money .Subtotal}}</p>
+            {{if .PodAvailable}}<span class="badge badge-info">Pay on delivery available</span>{{end}}
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <button hx-delete="/cart" hx-target="#cart-contents" hx-swap="innerHTML"
+                    hx-confirm="Empty your entire cart?"
+                    style="background: none; border: 1px solid var(--border); color: var(--text-muted);">Clear</button>
+            {{if .HasUnavailable}}
+                <button disabled style="opacity: 0.5; cursor: not-allowed;">Checkout</button>
+            {{else}}
+                <button onclick="alert('Checkout coming next')">Checkout</button>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

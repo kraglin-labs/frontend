@@ -1,0 +1,27 @@
+<h2>Check your email</h2>
+<p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+    We sent a 7-digit verification code to <strong>{{.Email}}</strong>.
+</p>
+
+<form hx-post="/auth/verify" hx-target="#verify-error" hx-swap="innerHTML">
+    <input type="hidden" name="token" value="{{.VerifyToken}}">
+    <input type="hidden" name="email" value="{{.Email}}">
+
+    <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Verification Code</label>
+        <input type="text" name="code" required minlength="7" maxlength="7" inputmode="numeric"
+               pattern="[0-9]{7}" placeholder="1234567"
+               style="width: 100%; box-sizing: border-box; text-align: center; letter-spacing: 0.3em; font-size: 1.2rem;">
+    </div>
+
+    <button type="submit" style="width: 100%;">Verify Email</button>
+</form>
+
+<div id="verify-error" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></div>
+
+<form hx-post="/auth/resend-code" hx-target="#verify-error" hx-swap="innerHTML" style="margin-top: 1rem; text-align: center;">
+    <input type="hidden" name="email" value="{{.Email}}">
+    <button type="submit" class="icon-btn" style="width: 100%; justify-content: center; font-size: 0.9rem;">
+        Didn't get it? Resend code
+    </button>
+</form>

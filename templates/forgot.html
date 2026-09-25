@@ -1,0 +1,23 @@
+{{define "title"}}Forgot Password - SethOfficial{{end}}
+
+{{define "content"}}
+<div class="card" id="forgot-container" style="max-width: 400px; margin: 2rem auto;">
+    <h2>Reset your password</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Enter your email and we'll send you a 7-digit reset code.</p>
+
+    <form hx-post="/auth/forgot-password" hx-target="#forgot-error" hx-swap="innerHTML">
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Email Address</label>
+            <input type="email" name="email" required placeholder="you@example.com" style="width: 100%; box-sizing: border-box;">
+        </div>
+
+        <button type="submit" style="width: 100%;">Send Reset Code</button>
+    </form>
+
+    <div id="forgot-error" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></div>
+
+    <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+        Remembered it? <a href="/login" hx-boost="true" style="color: var(--accent);">Back to sign in</a>
+    </p>
+</div>
+{{end}}

@@ -1,0 +1,90 @@
+{{define "title"}}{{if .NotFound}}Not Found{{else}}{{.Product.Name}} - SethOfficial{{end}}{{end}}
+{{define "content"}}
+{{if .NotFound}}
+<div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+    <h1>Product not found</h1>
+    <p style="color: var(--text-muted); margin-top: 1rem;">It may have been removed or the link is wrong.</p>
+    <a href="/" hx-boost="true" style="color: var(--accent); display: inline-block; margin-top: 1rem;">Back to shop</a>
+</div>
+{{else}}
+<a href="/" hx-boost="true" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to shop
+</a>
+
+<!-- Breadcrumb -->
+<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+    <a href="/" hx-boost="true" style="color: var(--text-muted);">Shop</a>
+    <span> / </span>
+    <span style="text-transform: capitalize;">{{.Product.Category}}</span>
+    <span> / </span>
+    <span>{{.Product.Name}}</span>
+</p>
+
+<div class="product-detail">
+    <!-- Gallery -->
+    <div class="product-gallery">
+        {{if .Product.Images}}
+            <img id="main-image" src="{{index .Product.Images 0}}" alt="{{.Product.Name}}" class="product-main-img">
+            {{if gt (len .Product.Images) 1}}
+            <div class="product-thumbs">
+                {{range .Product.Images}}
+                <img src="{{.}}" alt="" class="product-thumb" onclick="document.getElementById('main-image').src='{{.}}'">
+                {{end}}
+            </div>
+            {{end}}
+        {{else}}
+            <div class="product-main-img product-img-placeholder" style="display: flex; align-items: center; justify-content: center;">{{.Product.Category}}</div>
+        {{end}}
+    </div>
+
+    <!-- Info -->
+    <div class="product-info">
+        <span class="product-category" style="text-transform: capitalize;">{{.Product.Category}}</span>
+        <h1 style="margin: 0.5rem 0;">{{.Product.Name}}</h1>
+        <p class="product-price" style="font-size: 1.75rem;">{{money .Product.Price}}</p>
+
+        <div style="display: flex; gap: 0.5rem; margin: 0.75rem 0 1.25rem; flex-wrap: wrap;">
+            {{if eq .Product.Stock 0}}
+                <span class="badge badge-danger">Out of stock</span>
+            {{else}}
+                <span class="badge badge-success">In stock ({{.Product.Stock}} available)</span>
+            {{end}}
+            {{if .Product.PodEligible}}
+                <span class="badge badge-info">Pay on delivery available</span>
+            {{end}}
+        </div>
+
+        <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem;">{{.Product.Description}}</p>
+
+        {{if eq .Product.Stock 0}}
+            <button disabled style="width: 100%; opacity: 0.5; cursor: not-allowed;">Out of stock</button>
+        {{else if .IsLoggedIn}}
+            <form hx-post="/cart/items" hx-target="#cart-status" hx-swap="innerHTML">
+                <input type="hidden" name="product_id" value="{{.Product.ID}}">
+                <input type="hidden" name="quantity" id="quantity-input" value="1">
+
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Quantity</label>
+                    <div class="qty-selector">
+                        <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+                        <span id="qty-display">1</span>
+                        <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                    </div>
+                </div>
+
+                <button type="submit" style="width: 100%;">Add to Cart</button>
+            </form>
+            <div id="cart-status" style="margin-top: 0.75rem; text-align: center; font-size: 0.9rem;"></div>
+        {{else}}
+            <a href="/login" hx-boost="true">
+                <button style="width: 100%;">Sign in to add to cart</button>
+            </a>
+        {{end}}
+    </div>
+</div>
+{{end}}
+{{end}}

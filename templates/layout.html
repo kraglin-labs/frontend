@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{block "title" .}}SethOfficial{{end}}</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // Apply saved theme before first paint to avoid flashing
+        (function () {
+            if (localStorage.getItem('theme') === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
     <!-- Include HTMX globally -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
@@ -13,22 +21,80 @@
     <header class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">SethOfficial</a>
-            <nav style="display: flex; align-items: center; gap: 1rem;">
-                <a href="/" hx-boost="true">Home</a>
-                {{if .IsLoggedIn}}
-                    <a href="/profile" hx-boost="true" title="Profile" style="display: flex; align-items: center; color: var(--text);">
-                        <!-- SVG Profile Icon -->
+            <nav style="display: flex; align-items: center; gap: 1.25rem;">
+            	<!-- Cart -->
+            	<a href="/cart" hx-boost="true" class="icon-btn" style="position: relative;" aria-label="Cart">
+            	    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            	        <circle cx="9" cy="21" r="1"></circle>
+            	        <circle cx="20" cy="21" r="1"></circle>
+            	        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            	    </svg>
+            	    {{if .IsLoggedIn}}
+            	    <span id="cart-badge" class="cart-badge" {{if eq .CartCount 0}}style="display: none;"{{end}}>{{.CartCount}}</span>
+            	    {{end}}
+            	</a>
+            	<!-- Theme Toggle -->
+            	<button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">
+            	    <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            	        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            	    </svg>
+            	    <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            	        <circle cx="12" cy="12" r="5"></circle>
+            	        <line x1="12" y1="1" x2="12" y2="3"></line>
+            	        <line x1="12" y1="21" x2="12" y2="23"></line>
+            	        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            	        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            	        <line x1="1" y1="12" x2="3" y2="12"></line>
+            	        <line x1="21" y1="12" x2="23" y2="12"></line>
+            	        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            	        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            	    </svg>
+            	</button>
+                <!-- Search Toggle Icon -->
+                <button id="search-toggle" class="icon-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+    
+                <!-- Profile Icon + Dropdown (ALWAYS visible) -->
+                <div class="dropdown" id="profile-dropdown">
+                    <button id="profile-toggle" class="icon-btn" aria-label="Account">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                    </a>
-                {{else}}
-                    <a href="/login" hx-boost="true">Login</a>
-                {{end}}
+                    </button>
+    
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        {{if .IsLoggedIn}}
+                            <div class="dropdown-header">
+                                <span class="dropdown-name">{{.User.FullName}}</span>
+                                <span class="dropdown-email">{{.User.Email}}</span>
+                            </div>
+                            <a href="/profile" hx-boost="true">Personal Information</a>
+                            <a href="/auth/logout" hx-boost="true">Logout</a>
+                        {{else}}
+                            <a href="/login" hx-boost="true">Login</a>
+                            <a href="/register" hx-boost="true">Create Account</a>
+                        {{end}}
+                    </div>
+                </div>
             </nav>
         </div>
+    
+        <!-- Search Bar (drops down from header) -->
+        <div id="search-bar" class="search-bar">
+            <div class="nav-container">
+                <form hx-get="/search" hx-target="#search-results" hx-trigger="keyup changed delay:300ms from:input[name=q], submit">
+                    <input type="text" name="q" placeholder="Search SethOfficial..." autocomplete="off" autofocus>
+                </form>
+            </div>
+            <div id="search-results" class="search-results"></div>
+        </div>
     </header>
+    
 
     <!-- Main Page Content Injected Here -->
     <main class="container">
@@ -39,5 +105,110 @@
     <footer>
         <p>&copy; 2026 SethOfficial.</p>
     </footer>
+    <script>
+        // --- Theme handling (idempotent: safe to redefine on every load) ---
+        window.applyTheme = function (theme) {
+            const iconMoon = document.getElementById('icon-moon');
+            const iconSun  = document.getElementById('icon-sun');
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                if (iconMoon) iconMoon.style.display = 'none';
+                if (iconSun)  iconSun.style.display = 'block';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                if (iconMoon) iconMoon.style.display = 'block';
+                if (iconSun)  iconSun.style.display = 'none';
+            }
+        };
+        window.applyTheme(localStorage.getItem('theme') || 'dark');
+
+        // --- Quantity selector (product page) — also idempotent ---
+        let qty = 1;
+        window.changeQty = function (delta) {
+            qty = Math.min(Math.max(1, qty + delta), 99);
+            const display = document.getElementById('qty-display');
+            const input   = document.getElementById('quantity-input');
+            if (display) display.textContent = qty;
+            if (input)   input.value = qty;
+        };
+
+        // --- One-time global setup ---------------------------------------------
+        // The <body> is swapped by HTMX on every boosted navigation (and again
+        // on back/forward via history restore). Scripts in swapped content are
+        // NOT re-executed during history restore, so attaching listeners to
+        // elements directly breaks after pressing Back. Instead we delegate
+        // from `document`, which is never swapped. The guard flag prevents
+        // duplicate listeners when HTMX *does* re-run this script on forward nav.
+        if (!window.__sethInit) {
+            window.__sethInit = true;
+
+            document.addEventListener('click', (e) => {
+                // Profile dropdown toggle
+                if (e.target.closest('#profile-toggle')) {
+                    e.stopPropagation();
+                    const menu = document.getElementById('dropdown-menu');
+                    if (menu) menu.classList.toggle('open');
+                    return;
+                }
+
+                // Search bar toggle
+                if (e.target.closest('#search-toggle')) {
+                    const bar = document.getElementById('search-bar');
+                    if (bar) {
+                        bar.classList.toggle('open');
+                        if (bar.classList.contains('open')) {
+                            const input = bar.querySelector('input[name=q]');
+                            if (input) input.focus();
+                        }
+                    }
+                    return;
+                }
+
+                // Theme toggle
+                if (e.target.closest('#theme-toggle')) {
+                    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    localStorage.setItem('theme', next);
+                    window.applyTheme(next);
+                    return;
+                }
+
+                // Click anywhere else: close the dropdown
+                const menu = document.getElementById('dropdown-menu');
+                if (menu && !menu.contains(e.target)) {
+                    menu.classList.remove('open');
+                }
+            });
+
+            // Escape closes search + dropdown
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const bar = document.getElementById('search-bar');
+                    const menu = document.getElementById('dropdown-menu');
+                    if (bar)  bar.classList.remove('open');
+                    if (menu) menu.classList.remove('open');
+                }
+            });
+
+            // Cart badge sync. Delegated to `document` because `document.body`
+            // is replaced on every HTMX swap, which killed the old listener.
+            document.addEventListener('cartUpdated', (e) => {
+                const badge = document.getElementById('cart-badge');
+                if (!badge) return;
+                const count = e.detail.count;
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'inline-flex' : 'none';
+            });
+
+            // After HTMX swaps or restores history, re-sync the theme icons.
+            // The html[data-theme] attribute survives swaps, but the freshly
+            // inserted header markup always shows the moon by default.
+            document.addEventListener('htmx:afterSwap', () => {
+                window.applyTheme(localStorage.getItem('theme') || 'dark');
+            });
+            document.addEventListener('htmx:historyRestore', () => {
+                window.applyTheme(localStorage.getItem('theme') || 'dark');
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,0 +1,24 @@
+<h2>Enter your reset code</h2>
+<p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+    We sent a 7-digit code to <strong>{{.Email}}</strong>.
+</p>
+
+<form hx-post="/auth/reset-password" hx-target="#reset-error" hx-swap="innerHTML">
+    <input type="hidden" name="email" value="{{.Email}}">
+
+    <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Reset Code</label>
+        <input type="text" name="code" required minlength="7" maxlength="7" inputmode="numeric"
+               pattern="[0-9]{7}" placeholder="1234567"
+               style="width: 100%; box-sizing: border-box; text-align: center; letter-spacing: 0.3em; font-size: 1.2rem;">
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">New Password</label>
+        <input type="password" name="new_password" required minlength="8" placeholder="8+ characters" style="width: 100%; box-sizing: border-box;">
+    </div>
+
+    <button type="submit" style="width: 100%;">Reset Password</button>
+</form>
+
+<div id="reset-error" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></div>

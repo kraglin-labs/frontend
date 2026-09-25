@@ -8,12 +8,12 @@
     <form hx-post="/auth/login" hx-target="#login-error" hx-swap="innerHTML">
         <div style="margin-bottom: 1rem;">
             <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Email Address</label>
-            <input type="email" name="email" required placeholder="sebestianarchibald@gmail.com" style="width: 100%; box-sizing: border-box;">
+            <input type="email" name="email" required style="width: 100%; box-sizing: border-box;">
         </div>
         
         <div style="margin-bottom: 1.5rem;">
             <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Password</label>
-            <input type="password" name="password" required placeholder="••••••••" style="width: 100%; box-sizing: border-box;">
+            <input type="password" name="password" style="width: 100%; box-sizing: border-box;">
         </div>
         
         <button type="submit" style="width: 100%;">Sign In</button>
@@ -21,5 +21,16 @@
 
     <!-- Error/Status feedback target for HTMX -->
     <div id="login-error" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></div>
+
+    <div id="login-error" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></div>
+
+    <p style="margin-top: 1rem; text-align: center; font-size: 0.9rem;">
+        <a href="/forgot-password" hx-boost="true" style="color: var(--accent);">Forgot password?</a>
+    </p>
+
+    <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+        Don't have an account? <a href="/register" hx-boost="true" style="color: var(--accent);">Create one</a>
+    </p>
+</div>
 </div>
 {{end}}
