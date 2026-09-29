@@ -68,17 +68,18 @@
                     </button>
     
                     <div class="dropdown-menu" id="dropdown-menu">
-                        {{if .IsLoggedIn}}
-                            <div class="dropdown-header">
-                                <span class="dropdown-name">{{.User.FullName}}</span>
-                                <span class="dropdown-email">{{.User.Email}}</span>
-                            </div>
-                            <a href="/profile" hx-boost="true">Personal Information</a>
-                            <a href="/auth/logout" hx-boost="true">Logout</a>
-                        {{else}}
-                            <a href="/login" hx-boost="true">Login</a>
-                            <a href="/register" hx-boost="true">Create Account</a>
-                        {{end}}
+                    	{{if .IsLoggedIn}}
+                    	    <div class="dropdown-header">
+                    	        <span class="dropdown-name">{{.User.FullName}}</span>
+                    	        <span class="dropdown-email">{{.User.Email}}</span>
+                    	    </div>
+                    	    <a href="/profile" hx-boost="true">Personal Information</a>
+                    	    <a href="/orders" hx-boost="true">My Orders</a>
+                    	    <a href="/auth/logout" hx-boost="true">Logout</a>
+                    	{{else}}
+                    	    <a href="/login" hx-boost="true">Login</a>
+                    	    <a href="/register" hx-boost="true">Create Account</a>
+                    	{{end}}
                     </div>
                 </div>
             </nav>

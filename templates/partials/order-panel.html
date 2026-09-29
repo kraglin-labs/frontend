@@ -1,0 +1,198 @@
+{{define "order-panel"}}
+{{if eq .Status "pending"}}
+    {{if eq .PaymentMethod "bank_transfer"}}
+        {{template "order-panel-pending-bank" .}}
+    {{else}}
+        {{template "order-panel-pending-pod" .}}
+    {{end}}
+{{else if eq .Status "awaiting_confirmation"}}
+    {{template "order-panel-awaiting" .}}
+{{else if eq .Status "approved"}}
+    {{template "order-panel-approved" .}}
+{{else if eq .Status "shipped"}}
+    {{template "order-panel-shipped" .}}
+{{else if eq .Status "delivered"}}
+    {{template "order-panel-delivered" .}}
+{{else if eq .Status "cancelled"}}
+    {{template "order-panel-cancelled" .}}
+{{else if eq .Status "rejected"}}
+    {{template "order-panel-rejected" .}}
+{{end}}
+
+{{template "order-summary" .}}
+{{template "order-timeline" .}}
+{{end}}
+
+
+{{/* ---------- STATUS: pending + bank_transfer ---------- */}}
+{{define "order-panel-pending-bank"}}
+<div class="card" style="border-color: var(--accent); margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Complete your payment</h2>
+    <p style="margin-bottom: 1rem;">Transfer <strong class="product-price">{{money .Subtotal}}</strong> to:</p>
+    {{if .BankDetails}}
+    <div style="background: var(--bg-alt, rgba(255,255,255,0.03)); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+        <div><strong>Bank:</strong> {{.BankDetails.BankName}}</div>
+        <div><strong>Account name:</strong> {{.BankDetails.AccountName}}</div>
+        <div><strong>Account number:</strong> {{.BankDetails.AccountNumber}}</div>
+    </div>
+    {{end}}
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+        Use your order code <strong>{{.OrderCode}}</strong> as the transfer narration.
+    </p>
+
+    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+        <button hx-post="/orders/{{.ID}}/mark-paid"
+                hx-target="#order-panel" hx-swap="innerHTML">
+            I've paid
+        </button>
+
+        <button hx-post="/orders/{{.ID}}/cancel"
+                hx-vals='{"reason": "Changed my mind"}'
+                hx-target="#order-panel" hx-swap="innerHTML"
+                hx-confirm="Cancel this order?"
+                style="background: none; border: 1px solid var(--border); color: var(--text-muted);">
+            Cancel order
+        </button>
+    </div>
+</div>
+{{end}}
+
+
+{{/* ---------- STATUS: pending + pay_on_delivery ---------- */}}
+{{define "order-panel-pending-pod"}}
+<div class="card" style="margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Waiting for confirmation</h2>
+    <p>We'll confirm your order shortly.</p>
+    <p style="color: var(--text-muted); margin-top: 0.5rem;">
+        You'll pay <strong class="product-price">{{money .Subtotal}}</strong> when it's delivered.
+    </p>
+    <div style="margin-top: 1rem;">
+        <button hx-post="/orders/{{.ID}}/cancel"
+                hx-vals='{"reason": "Changed my mind"}'
+                hx-target="#order-panel" hx-swap="innerHTML"
+                hx-confirm="Cancel this order?"
+                style="background: none; border: 1px solid var(--border); color: var(--text-muted);">
+            Cancel order
+        </button>
+    </div>
+</div>
+{{end}}
+
+
+{{/* ---------- STATUS: awaiting_confirmation ---------- */}}
+{{define "order-panel-awaiting"}}
+<div class="card" style="margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">We're checking your payment</h2>
+    <p>This usually takes a few minutes.</p>
+
+    {{if .BankDetails}}
+    <div style="background: var(--bg-alt, rgba(255,255,255,0.03)); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">You transferred to:</p>
+        <div><strong>{{.BankDetails.BankName}}</strong> — {{.BankDetails.AccountNumber}}</div>
+        <div style="color: var(--text-muted); font-size: 0.85rem;">{{.BankDetails.AccountName}}</div>
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+
+{{/* ---------- STATUS: approved ---------- */}}
+{{define "order-panel-approved"}}
+<div class="card" style="margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Order confirmed — we're preparing it</h2>
+    {{if eq .PaymentMethod "pay_on_delivery"}}
+        <p>Have <strong class="product-price">{{money .Subtotal}}</strong> ready on delivery.</p>
+    {{else}}
+        <p>We've received your payment. Thanks!</p>
+    {{end}}
+</div>
+{{end}}
+
+
+{{/* ---------- STATUS: shipped ---------- */}}
+{{define "order-panel-shipped"}}
+<div class="card" style="border-color: var(--accent); margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Your order is on its way</h2>
+    <p style="margin-bottom: 0.5rem;">Your pickup code:</p>
+    <div style="font-size: 2rem; font-weight: 700; letter-spacing: 0.2em; margin-bottom: 1rem;">
+        {{.PickupCode}}
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Bring both your order code (<strong>{{.OrderCode}}</strong>) and this code when you pick up.
+    </p>
+    {{if eq .PaymentMethod "pay_on_delivery"}}
+        <p style="margin-top: 0.75rem;">Have <strong>{{money .Subtotal}}</strong> ready on delivery.</p>
+    {{end}}
+</div>
+{{end}}
+
+
+{{/* ---------- STATUS: delivered ---------- */}}
+{{define "order-panel-delivered"}}
+<div class="card" style="border-color: #16a34a; margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #16a34a;">Delivered</h2>
+    <p>Thanks for shopping with us.</p>
+</div>
+{{end}}
+
+
+{{/* ---------- STATUS: cancelled ---------- */}}
+{{define "order-panel-cancelled"}}
+<div class="card" style="margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">You cancelled this order</h2>
+    {{if .CancelReason}}<p style="color: var(--text-muted);">Reason: {{.CancelReason}}</p>{{end}}
+    <a href="/" hx-boost="true" style="color: var(--accent); display: inline-block; margin-top: 1rem;">Shop again</a>
+</div>
+{{end}}
+
+
+{{/* ---------- STATUS: rejected ---------- */}}
+{{define "order-panel-rejected"}}
+<div class="card" style="border-color: #7f1d1d; margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--danger);">We couldn't fulfil this order</h2>
+    {{if .RejectReason}}<p style="margin-bottom: 0.5rem;">{{.RejectReason}}</p>{{end}}
+    {{if eq .PaymentMethod "bank_transfer"}}
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Your payment will be refunded. We'll contact you to arrange it.
+        </p>
+    {{end}}
+</div>
+{{end}}
+
+
+{{/* ---------- Shared: order summary ---------- */}}
+{{define "order-summary"}}
+<div class="card" style="margin-bottom: 1rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Items</h2>
+    {{range .Items}}
+    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+        <span>{{.Name}} <span style="color: var(--text-muted);">× {{.Quantity}}</span></span>
+        <span>{{money .Subtotal}}</span>
+    </div>
+    {{end}}
+    <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-weight: 600;">
+        <span>Total</span>
+        <span class="product-price">{{money .Subtotal}}</span>
+    </div>
+
+    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem;">
+        <strong>Shipping to:</strong> {{.ShippingAddress.OneLine}}
+    </div>
+</div>
+{{end}}
+
+
+{{/* ---------- Shared: timeline ---------- */}}
+{{define "order-timeline"}}
+<div class="card">
+    <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Timeline</h2>
+    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        {{if .Timeline.CreatedAt}}<div>📝 Placed — {{.Timeline.CreatedAt}}</div>{{end}}
+        {{if .Timeline.ApprovedAt}}<div>✅ Approved — {{.Timeline.ApprovedAt}}</div>{{end}}
+        {{if .Timeline.ShippedAt}}<div>🚚 Shipped — {{.Timeline.ShippedAt}}</div>{{end}}
+        {{if .Timeline.DeliveredAt}}<div>📦 Delivered — {{.Timeline.DeliveredAt}}</div>{{end}}
+        {{if .Timeline.CancelledAt}}<div>❌ Cancelled — {{.Timeline.CancelledAt}}</div>{{end}}
+        {{if .Timeline.RejectedAt}}<div>🚫 Rejected — {{.Timeline.RejectedAt}}</div>{{end}}
+    </div>
+</div>
+{{end}}

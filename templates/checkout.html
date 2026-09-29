@@ -1,0 +1,77 @@
+{{define "title"}}Checkout - SethOfficial{{end}}
+
+{{define "content"}}
+<a href="/cart" hx-boost="true" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to cart
+</a>
+
+<h1 style="margin-bottom: 1.5rem;">Checkout</h1>
+
+<form hx-post="/checkout/place" hx-target="#checkout-error" hx-swap="innerHTML">
+    <input type="hidden" name="client_token" value="{{.ClientToken}}">
+
+    <div id="checkout-error"></div>
+
+    <!-- Order summary -->
+    <div class="card" style="margin-bottom: 1rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Order Summary</h2>
+        {{range .Cart.Items}}
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+            <span>{{.Name}} <span style="color: var(--text-muted);">× {{.Quantity}}</span></span>
+            <span>{{money .Subtotal}}</span>
+        </div>
+        {{end}}
+        <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-weight: 600;">
+            <span>Subtotal ({{.Cart.ItemCount}} item{{if gt .Cart.ItemCount 1}}s{{end}})</span>
+            <span class="product-price">{{money .Cart.Subtotal}}</span>
+        </div>
+    </div>
+
+    <!-- Shipping address -->
+    <div class="card" style="margin-bottom: 1rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Shipping Address</h2>
+        {{if .Address}}
+            <p>{{.Address.OneLine}}</p>
+            <a href="/profile" hx-boost="true" style="color: var(--accent); font-size: 0.9rem;">Edit address</a>
+        {{else}}
+            <p style="color: var(--danger);">You need a shipping address before you can check out.</p>
+            <a href="/profile" hx-boost="true" style="color: var(--accent);">Add shipping address →</a>
+        {{end}}
+    </div>
+
+    <!-- Payment method -->
+    <div class="card" style="margin-bottom: 1rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Payment Method</h2>
+
+        <label style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; cursor: pointer;">
+            <input type="radio" name="payment_method" value="bank_transfer" checked>
+            <div>
+                <strong>Bank transfer</strong>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">You'll get bank details after placing the order.</p>
+            </div>
+        </label>
+
+        <label style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; cursor: {{if .Cart.PodAvailable}}pointer{{else}}not-allowed{{end}}; opacity: {{if .Cart.PodAvailable}}1{{else}}0.5{{end}};">
+            <input type="radio" name="payment_method" value="pay_on_delivery" {{if not .Cart.PodAvailable}}disabled{{end}}>
+            <div>
+                <strong>Pay on delivery</strong>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">
+                    {{if .Cart.PodAvailable}}Pay when the order arrives.{{else}}Not available for this order.{{end}}
+                </p>
+            </div>
+        </label>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <a href="/cart" hx-boost="true" class="back-btn" style="padding: 0.75rem 1.25rem;">Back to cart</a>
+        <button type="submit"
+                {{if not .Address}}disabled style="opacity: 0.5; cursor: not-allowed;"{{end}}>
+            Place Order
+        </button>
+    </div>
+</form>
+{{end}}

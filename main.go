@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-
+	"strings"
 	"frontend/handlers"
 )
 
@@ -38,11 +38,32 @@ func main() {
 	http.HandleFunc("/products/more", handlers.ProductsMore)
 	http.HandleFunc("/product/", handlers.ProductPage)
 
-	// Cart routes
-	http.HandleFunc("/cart", handlers.CartHandler)              // GET page / DELETE clear
-	http.HandleFunc("/cart/items", handlers.AddToCart)          // POST
-	http.HandleFunc("/cart/items/", handlers.CartItemHandler)   // PUT / DELETE (id in path)
-
+	// Cart routes (existing)
+	http.HandleFunc("/cart", handlers.CartHandler)
+	http.HandleFunc("/cart/items", handlers.AddToCart)
+	http.HandleFunc("/cart/items/", handlers.CartItemHandler)
+	
+	// Checkout routes
+	http.HandleFunc("/checkout", handlers.CheckoutPage)     // GET review page
+	http.HandleFunc("/checkout/place", handlers.PlaceOrder) // POST place order
+	
+	// Order routes
+	http.HandleFunc("/orders", handlers.OrdersListPage)          // GET list
+	http.HandleFunc("/orders/", func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		switch {
+		case strings.HasSuffix(path, "/panel"):
+			handlers.OrderPanel(w, r)
+		case strings.HasSuffix(path, "/mark-paid"):
+			handlers.MarkOrderPaid(w, r)
+		case strings.HasSuffix(path, "/cancel"):
+			handlers.CancelOrder(w, r)
+		default:
+			handlers.OrderDetailPage(w, r)
+		}
+	})
+	
+	
 	// Search routes
 	http.HandleFunc("/search", handlers.SearchPage)
 	http.HandleFunc("/search/suggest", handlers.Suggest)

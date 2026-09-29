@@ -1,0 +1,29 @@
+{{define "title"}}Order {{.Order.OrderCode}} - SethOfficial{{end}}
+
+{{define "content"}}
+<a href="/orders" hx-boost="true" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    All orders
+</a>
+
+<h1 style="margin-bottom: 0.5rem;">Order {{.Order.OrderCode}}</h1>
+<p style="color: var(--text-muted); margin-bottom: 1.5rem;">Placed {{.Order.CreatedAt}}</p>
+
+<!--
+  The whole stateful panel is one partial. On mount we render it inline, and
+  the polling HX attributes on the wrapper only fire when the order is not
+  terminal. After each action (mark-paid, cancel) the server swaps this same
+  partial back in.
+-->
+<div id="order-panel"
+     {{if not .Order.IsTerminal}}
+     hx-get="/orders/{{.Order.ID}}/panel"
+     hx-trigger="every 45s"
+     hx-swap="innerHTML"
+     {{end}}>
+    {{template "order-panel" .Order}}
+</div>
+{{end}}

@@ -1,0 +1,32 @@
+{{define "title"}}My Orders - SethOfficial{{end}}
+
+{{define "content"}}
+<a href="/" hx-boost="true" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to shop
+</a>
+
+<h1 style="margin-bottom: 1.5rem;">My Orders</h1>
+
+{{if not .Orders}}
+<div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+    <p style="color: var(--text-muted);">You haven't placed any orders yet.</p>
+</div>
+{{else}}
+{{range .Orders}}
+<a href="/orders/{{.ID}}" hx-boost="true" style="text-decoration: none; color: inherit; display: block;">
+    <div class="card" style="margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+        <div>
+            <div style="font-weight: 600;">{{.OrderCode}}</div>
+            <div class="product-price">{{money .Subtotal}}</div>
+            <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Placed {{.CreatedAt}}</div>
+        </div>
+        <span class="badge order-status-badge status-{{.Status}}">{{.Status}}</span>
+    </div>
+</a>
+{{end}}
+{{end}}
+{{end}}

@@ -60,11 +60,13 @@
             <button hx-delete="/cart" hx-target="#cart-contents" hx-swap="innerHTML"
                     hx-confirm="Empty your entire cart?"
                     style="background: none; border: 1px solid var(--border); color: var(--text-muted);">Clear</button>
-            {{if .HasUnavailable}}
-                <button disabled style="opacity: 0.5; cursor: not-allowed;">Checkout</button>
-            {{else}}
-                <button onclick="alert('Checkout coming next')">Checkout</button>
-            {{end}}
+			{{if .HasUnavailable}}
+			    <button disabled style="opacity: 0.5; cursor: not-allowed;">Checkout</button>
+			{{else}}
+			    <a href="/checkout" hx-boost="true">
+			        <button>Checkout</button>
+			    </a>
+			{{end}}
         </div>
     </div>
 </div>
