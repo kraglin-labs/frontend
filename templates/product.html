@@ -1,4 +1,30 @@
-{{define "title"}}{{if .NotFound}}Not Found{{else}}{{.Product.Name}} - SethOfficial{{end}}{{end}}
+{{define "title"}}{{.Product.Name}} — SethOfficial{{end}}
+{{define "meta_description"}}{{block "og_description" .}}Buy {{.Product.Name}} at SethOfficial. {{.Product.ShortDescription | truncate 120}}{{end}}{{end}}
+{{define "canonical"}}https://sethstore.shop/product/{{.Product.Slug}}{{end}}
+
+{{define "og_type"}}product{{end}}
+{{define "og_title"}}{{.Product.Name}} — SethOfficial{{end}}
+{{define "og_image"}}{{if .Product.ImageURL}}{{.Product.ImageURL}}{{else}}https://sethstore.shop/static/og-default.jpg{{end}}{{end}}
+
+{{define "jsonld"}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{.Product.Name | json}},
+  "image": [{{.Product.ImageURL | json}}],
+  "description": {{.Product.Description | json}},
+  "sku": {{.Product.SKU | json}},
+  "offers": {
+    "@type": "Offer",
+    "url": {{print "https://sethstore.shop/product/" .Product.Slug | json}},
+    "priceCurrency": "USD",
+    "price": {{.Product.Price}},
+    "availability": "https://schema.org/{{if .Product.InStock}}InStock{{else}}OutOfStock{{end}}"
+  }
+}
+</script>
+{{end}}
 {{define "content"}}
 {{if .NotFound}}
 <div class="card" style="text-align: center; padding: 3rem 1.5rem;">
