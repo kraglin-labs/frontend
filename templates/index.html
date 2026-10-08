@@ -1,4 +1,25 @@
-{{define "title"}}SethOfficial{{end}}
+{{define "title"}}SethOfficial — Curated Products, Fast Delivery{{end}}
+{{define "meta_description"}}Shop SethOfficial: a curated selection of quality products with secure checkout and fast delivery. New arrivals added regularly.{{end}}
+{{define "canonical"}}https://sethstore.shop/{{end}}
+
+{{define "jsonld"}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "SethOfficial",
+  "url": "https://sethstore.shop/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://sethstore.shop/search?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{{end}}
 
 {{define "content"}}
 {{if .IsLoggedIn}}
