@@ -1,3 +1,17 @@
 User-agent: *
 Allow: /
-Sitemap: https://https://sethstore.onrender.com/sitemap.xml
+Disallow: /cart
+Disallow: /checkout
+Disallow: /checkout/place
+Disallow: /profile
+Disallow: /profile/address
+Disallow: /account/
+Disallow: /orders
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /search/suggest
+Disallow: /products/more
+
+Sitemap: https://sethstore.shop/sitemap.xml

@@ -1,30 +1,33 @@
-{{define "title"}}{{.Product.Name}} — SethOfficial{{end}}
-{{define "meta_description"}}{{block "og_description" .}}Buy {{.Product.Name}} at SethOfficial. {{.Product.ShortDescription | truncate 120}}{{end}}{{end}}
-{{define "canonical"}}https://sethstore.shop/product/{{.Product.Slug}}{{end}}
+{{define "title"}}{{.Product.Name}} — SethStore{{end}}
+{{define "meta_description"}}{{printf "%.160s" .Product.Description}}{{end}}
+{{define "canonical"}}https://sethstore.shop/product/{{.Product.ID}}{{end}}
 
 {{define "og_type"}}product{{end}}
-{{define "og_title"}}{{.Product.Name}} — SethOfficial{{end}}
-{{define "og_image"}}{{if .Product.ImageURL}}{{.Product.ImageURL}}{{else}}https://sethstore.shop/static/og-default.jpg{{end}}{{end}}
+{{define "og_title"}}{{.Product.Name}} — SethStore{{end}}
+{{define "og_description"}}{{printf "%.200s" .Product.Description}}{{end}}
+{{define "og_url"}}https://sethstore.shop/product/{{.Product.ID}}{{end}}
+{{define "og_image"}}{{if .Product.Images}}https://sethstore.shop/static/og-default.jpg{{end}}{{end}}
 
 {{define "jsonld"}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Product",
-  "name": {{.Product.Name | json}},
-  "image": [{{.Product.ImageURL | json}}],
-  "description": {{.Product.Description | json}},
-  "sku": {{.Product.SKU | json}},
+  "name": {{.Product.Name}},
+  "description": {{printf "%.300s" .Product.Description}},
+  "sku": {{.Product.ID}},
+  {{if .Product.Images}}"image": {{index .Product.Images 0}},{{end}}
   "offers": {
     "@type": "Offer",
-    "url": {{print "https://sethstore.shop/product/" .Product.Slug | json}},
-    "priceCurrency": "USD",
+    "url": "https://sethstore.shop/product/{{.Product.ID}}",
+    "priceCurrency": "NGN",
     "price": {{.Product.Price}},
-    "availability": "https://schema.org/{{if .Product.InStock}}InStock{{else}}OutOfStock{{end}}"
+    "availability": "https://schema.org/{{if gt .Product.Stock 0}}InStock{{else}}OutOfStock{{end}}"
   }
 }
 </script>
 {{end}}
+
 {{define "content"}}
 {{if .NotFound}}
 <div class="card" style="text-align: center; padding: 3rem 1.5rem;">

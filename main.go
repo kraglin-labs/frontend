@@ -62,6 +62,14 @@ func main() {
 			handlers.OrderDetailPage(w, r)
 		}
 	})
+
+	http.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/robots.txt")
+	})
+	
+	// Dynamic sitemap
+	http.HandleFunc("/sitemap.xml", handlers.Sitemap)
+	
 	
 	
 	// Search routes

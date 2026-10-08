@@ -11,7 +11,7 @@
     <meta name="description" content="{{block "meta_description" .}}SethStore — curated products, secure checkout and fast delivery. Shop the latest arrivals today.{{end}}">
 
     <!-- Canonical URL: prevents duplicate-content issues on /search?q= etc. -->
-    <link rel="canonical" href="{{block "canonical" .}}{{.CanonicalURL}}{{end}}">
+    <link rel="canonical" href="{{block "canonical" .}}https://sethstore.shop/{{end}}">
 
     <!-- Robots: allow indexing by default, block sensitive pages per-template -->
     <meta name="robots" content="{{block "robots" .}}index, follow{{end}}">
@@ -21,7 +21,7 @@
     <meta property="og:site_name" content="SethOfficial">
     <meta property="og:title" content="{{block "og_title" .}}SethOfficial{{end}}">
     <meta property="og:description" content="{{block "og_description" .}}SethStore — curated products, secure checkout and fast delivery.{{end}}">
-    <meta property="og:url" content="{{block "og_url" .}}{{.CanonicalURL}}{{end}}">
+    <meta property="og:url" content="{{block "og_url" .}}https://sethstore.shop/{{end}}">
     <meta property="og:image" content="{{block "og_image" .}}https://sethstore.shop/static/og-default.jpg{{end}}">
 
     <!-- ===== Twitter Card ===== -->
@@ -48,6 +48,7 @@
             }
         })();
     </script>
+    <!-- Include HTMX globally -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
